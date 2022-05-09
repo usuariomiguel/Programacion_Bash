@@ -3,13 +3,55 @@
 echo "BUENOS DIAS"
             
 function fpermisos {
-    echo "Permisos"
-	ls -l
-    read -p "ruta: " ruta 
-    read -p "permiso: " permiso
-    echo $permiso $ruta
-    chmod $permiso $ruta
-    ls -l $ruta
+	ruta=$(yad --width=400 --height=50 --tittle="permisos" --form --center --file) 2> /dev/null
+	usuario=$(yad --list --tittle="Asignar permisos"--width=400 --height=200 --button=Cancelar:1 --button=Aceptar:0 --center \
+	--text="Selecciona permisos" --checklist --column="" --column="usuario" 1 "lectura" 2 "escritura" 3 "ejecucion" \
+	)
+	ans=$?
+	if [ $ans -eq 0 ]
+	then
+		for i in $usuario; 
+		do 
+			IFS="|" read -r -a pu <<< "$usuario"
+			echo ${pu[1]}
+		done
+	
+		#echo "Has elegido: ${ru} ${wu} ${xu} "
+	else
+		echo "No has elegido ningún componente"
+	fi
+	
+	grupo=$(yad --list --tittle="Asignar permisos"--width=400 --height=200 --button=Cancelar:1 --button=Aceptar:0 --center \
+	--text="Selecciona permisos" --checklist --column="" --column="grupo" 1 "lectura" 2 "escritura" 3 "ejecucion" \
+	)
+	ans=$?
+	if [ $ans -eq 0 ]
+	then
+		for i in $grupo; 
+		do 
+			IFS="|" read -r -a pg <<< "$grupo"
+			echo ${pg[1]}
+		done
+	else
+		echo "No has elegido ningún componente"
+	fi
+	
+	otros=$(yad --list --tittle="Asignar permisos"--width=400 --height=200 --button=Cancelar:1 --button=Aceptar:0 --center \
+	--text="Selecciona permisos" --checklist --column="" --column="otros" 1 "lectura" 2 "escritura" 3 "ejecucion" \
+	)
+	ans=$?
+	if [ $ans -eq 0 ]
+	then
+		for i in $otros; 
+		do 
+			IFS="|" read -r -a po <<< "$otros"
+			echo ${po[1]}
+		done
+	else
+		echo "No has elegido ningún componente"
+	fi
+    #chmod "$permiso $ruta"
+    #ls -l $ruta
 
 }
             
