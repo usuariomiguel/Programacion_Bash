@@ -1,74 +1,72 @@
 #!/usr/bin/env bash 
-
-echo "BUENOS DIAS"
             
 function fpermisos {
-	ruta=$(yad --width=400 --height=50 --tittle="permisos" --form --center --file) 2> /dev/null
-	usuario=$(yad --list --tittle="Asignar permisos"--width=400 --height=200 --button=Cancelar:1 --button=Aceptar:0 --center \
-	--text="Selecciona permisos" --checklist --column="" --column="usuario" 1 "lectura" 2 "escritura" 3 "ejecucion" \
-	)
+	pruta=$(yad --width=400 --height=50 --tittle="permisos" --form --center --file)
+	
+	usuario=$(yad --form --tittle="Asignar permisos" --width=1000 --height=250 --button=Cancelar:1 --button=Aceptar:0 --center \
+	--text="Selecciona permisos" --column="" --field="usuario":NUM --field="grupo":NUM --field="otros":NUM \
+	--text="Escribe el valor dependiendo de los permisos que quieras asignar
+	
+<b>Chuleta:</b>
+<b>4</b> = lectura
+<b>2</b> = escritura
+<b>1</b> = ejecucion
+<b>7</b> = lectura + escritura + ejecucion
+<b>6</b> = lectura + escritura
+<b>5</b> = lectura + ejecucion
+<b>3</b> = escritura + ejecucion
+")
 	ans=$?
 	if [ $ans -eq 0 ]
 	then
-		for i in $usuario; 
-		do 
 			IFS="|" read -r -a pu <<< "$usuario"
-			echo ${pu[1]}
-		done
+			user=${pu[0]}
+			group=${pu[1]}
+			other=${pu[2]}
 	
-		#echo "Has elegido: ${ru} ${wu} ${xu} "
+		permisos="$user$group$other"
+		echo ${permisos}
 	else
 		echo "No has elegido ningún componente"
 	fi
-	
-	grupo=$(yad --list --tittle="Asignar permisos"--width=400 --height=200 --button=Cancelar:1 --button=Aceptar:0 --center \
-	--text="Selecciona permisos" --checklist --column="" --column="grupo" 1 "lectura" 2 "escritura" 3 "ejecucion" \
-	)
-	ans=$?
-	if [ $ans -eq 0 ]
-	then
-		for i in $grupo; 
-		do 
-			IFS="|" read -r -a pg <<< "$grupo"
-			echo ${pg[1]}
-		done
-	else
-		echo "No has elegido ningún componente"
-	fi
-	
-	otros=$(yad --list --tittle="Asignar permisos"--width=400 --height=200 --button=Cancelar:1 --button=Aceptar:0 --center \
-	--text="Selecciona permisos" --checklist --column="" --column="otros" 1 "lectura" 2 "escritura" 3 "ejecucion" \
-	)
-	ans=$?
-	if [ $ans -eq 0 ]
-	then
-		for i in $otros; 
-		do 
-			IFS="|" read -r -a po <<< "$otros"
-			echo ${po[1]}
-		done
-	else
-		echo "No has elegido ningún componente"
-	fi
-    #chmod "$permiso $ruta"
-    #ls -l $ruta
+    chmod $permisos $pruta
+    ls -l $ruta
 
 }
             
 function ftareas {
+	truta=$(yad --width=400 --height=50 --tittle="permisos" --form --center --file)
 
-echo "Tareas Programadas"
-ls -l
-read -p "ruta del fichero: " fichero
-read -p "comando: " comando
-read -p "usuario: " usuario
-read -p "mes: " mes
-read -p "dias: " dias
-read -p "dia de la semana: " dsemana
-read -p "hora: " hora
-read -p "minuto: " minuto 
-echo "$minuto $hora	$dias $mes $dsemana root 	$comando $fichero">>crontab
-cat crontab
+	tareas=$(yad --form --tittle="Tareas Programadas"--width=1000 --height=250 \
+	--button=Cancelar:1 --button=Aceptar:0 \
+	--center --field="<b>Descripcion</b>" --field="<b>Comado</b>" \
+	--text="<br>"--field="<b>Dia de semana</b>[0-6]" --field="<b>Día</b>" --field="<b>Mes</b>" --field="<b>Hora</b>":NUM --field="<b>Minuto</b>":NUM \
+	--text="Escribe el valor dependiendo de los permisos que quieras asignar
+Escriba "*" para repetir la tarea cada hora, dia, mes,etc.
+buenas tardes")
+	ans=$?
+	if [ $ans -eq 0 ]
+	then
+
+			IFS="|" read -r -a elementos <<< "$tareas"
+				descripcion=${elementos[0]}
+				comando=${elementos[1]}
+				fecha=${elementos[2]}
+				hora=${elementos[3]}
+				minuto=${elementos[4]}
+
+			IFS="/" read -r -a fech <<< "$fecha"
+				dia=${fech[0]}
+				mes=${fech[1]}
+
+		#echo "$tareas"
+		sudo echo "$minuto $hora $dia $mes $anyo $usuario $comando" >> /etc/crontab
+	else
+		echo "No has elegido ningún componente"
+	fi
+
+#echo "$minuto $hora	$dias $mes $dsemana root 	$comando $tfichero">>crontab
+#cat crontab
 }
 
 function fborrar {
