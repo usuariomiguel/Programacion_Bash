@@ -127,8 +127,8 @@ function fborrar { # movemos el fichero/carpeta a basura
 	cd /home/$USER/
 	mkdir /home/$USER/papelera
 	pruta=$(yad --form --width=400 --height=50 --tittle="eliminar" --center --file)
-    sudo mv $pruta /home/$USER/papelera
-    cbasura=$(ls /home/$USER/papelera)
+    	sudo mv $pruta /home/$USER/papelera
+	cbasura=$(ls /home/$USER/papelera)
 	yad --form --image=gtk-ok --center --height=300 --width=250 --text="<b>Contenido papelera:</b>
     
 ${cbasura}"
